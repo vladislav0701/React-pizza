@@ -20,8 +20,8 @@ function App() {
             <PizzaList />
           </div>
         </div>
-        <Cart />
-        <CartEmpty />
+        {/* <Cart /> */}
+        {/* <CartEmpty /> */}
       </div>
     </div>
   );
