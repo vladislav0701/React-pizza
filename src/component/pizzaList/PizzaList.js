@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { createSelector } from "reselect";
 
 import { useHttp } from "../../hook/http.hook";
 import { pizzaFetching, pizzaFetched, pizzaFetchingError } from "../../action";
@@ -7,9 +8,22 @@ import PizzaListItem from "../pizzaListItem/PizzaListItem";
 import Spinner from "../spinner/Spinner";
 
 const PizzaList = () => {
+    const filteredPizzaSelector = createSelector(
+        (state) => state.filters.activeFilter,
+        (state) => state.pizzas.pizza,
+        (activeFilter, pizza) => {
+            if (activeFilter === 0) {
+                return pizza;
+            } else {
+                return pizza.filter(item => item.category === activeFilter)
+            }
+        }
+    );
+
+    const filteredPizza = useSelector(filteredPizzaSelector);
     const {request} = useHttp();
     const dispatch = useDispatch();
-    const {pizza, pizzaLoadingStatus} = useSelector(state => state);
+    const { pizzaLoadingStatus} = useSelector(state => state);
 
     useEffect(() => {
         dispatch(pizzaFetching());
@@ -34,7 +48,7 @@ const PizzaList = () => {
         })
     }
 
-    const elements = renderPizza(pizza);
+    const elements = renderPizza(filteredPizza);
 
     return (
         <div className="content__items">

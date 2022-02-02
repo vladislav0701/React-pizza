@@ -16,3 +16,17 @@ export const pizzaFetchingError = () => {
         type: "PIZZA_FETCHING_ERROR"
     }
 }
+
+export const toggleActiveFilter = (category) => {
+    return {
+        type: "ACTIVE_FILTER",
+        payload: category
+    }
+}
+
+export const filteredPizza = (arr) => {
+    return {
+        type: "FILTERED_PIZZA",
+        payload: arr
+    }
+}

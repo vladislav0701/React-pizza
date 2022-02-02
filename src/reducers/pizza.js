@@ -1,9 +1,9 @@
 const initialState = {
     pizza: [],
-    pizzaLoadingStatus: "idle"
+    pizzaLoadingStatus: "idle",
 }
 
-const reducer = (state = initialState, action) => {
+const pizzas = (state = initialState, action) => {
     switch (action.type) {
         case "PIZZA_FETCHIND":
             return {
@@ -25,4 +25,4 @@ const reducer = (state = initialState, action) => {
     }
 }
 
-export default reducer;
+export default pizzas;
