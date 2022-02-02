@@ -1,6 +1,7 @@
 const initialState = {
     pizza: [],
     pizzaLoadingStatus: "idle",
+    cart: []
 }
 
 const pizzas = (state = initialState, action) => {
@@ -20,6 +21,11 @@ const pizzas = (state = initialState, action) => {
             return {
                 ...state,
                 pizzaLoadingStatus: "error"
+            }
+        case "ADD_PIZZA_CART":
+            return {
+                ...state,
+                cart: [...state.cart, action.payload]
             }
         default: return state
     }

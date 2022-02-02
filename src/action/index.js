@@ -37,3 +37,10 @@ export const toggleActiveSort = (sort) => {
         payload: sort
     }
 }
+
+export const addPizzaCart = (item) => {
+    return {
+        type: "ADD_PIZZA_CART",
+        payload: item
+    }
+}
