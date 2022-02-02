@@ -30,3 +30,10 @@ export const filteredPizza = (arr) => {
         payload: arr
     }
 }
+
+export const toggleActiveSort = (sort) => {
+    return {
+        type: "ACTIVE_SORT",
+        payload: sort
+    }
+}

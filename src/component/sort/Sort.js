@@ -1,6 +1,46 @@
+import { useState, useRef, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { toggleActiveSort } from "../../action";
+
 const Sort = () => {
+    const [visiblePopup, setVisiblePopup] = useState(false);
+    const {activeSort} = useSelector(state => state.filters);
+    const sortRef = useRef();
+    const dispatch = useDispatch();
+
+    const handleOutsideClick = (event) => {
+        const path = event.path || (event.composePath && event.composedPath());
+        if (!path.includes(sortRef.current)) {
+            setVisiblePopup(false);
+        }
+    }
+
+    useEffect(() => {
+        document.body.addEventListener('click', handleOutsideClick);
+    }, [])
+
+
+    const onToggleActiveSort = (sort) => {
+        dispatch(toggleActiveSort(sort))
+        setVisiblePopup(false);
+    }
+
+    let sortName = "популярности";
+
+    switch (activeSort) {
+        case "price":
+            sortName = "цене";
+            break;
+        case "alphabet":
+            sortName = "алфавиту"
+            break;
+        default:
+            sortName = "популярности"
+    }
+
     return (
-        <div className="sort">
+        <div className="sort" ref={sortRef}>
             <div className="sort__label">
                 <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -8,15 +48,35 @@ const Sort = () => {
                     fill="#2C2C2C" />
                 </svg>
                 <b>Сортировка по:</b>
-                <span>популярности</span>
+                <span
+                    onClick={() => setVisiblePopup(!visiblePopup)}>{sortName}</span>
             </div>
-            <div className="sort__popup">
-                <ul>
-                <li className="active">популярности</li>
-                <li>цене</li>
-                <li>алфавиту</li>
-                </ul>
-            </div>
+            {visiblePopup ? <Popap activeSort={activeSort} onToggleActiveSort={onToggleActiveSort}/> : null}
+        </div>
+    )
+}
+
+const Popap = ({activeSort, onToggleActiveSort}) => {
+    const sortData = [
+        {type: "popularity", label: "популярности"},
+        {type: "price", label: "цене"},
+        {type: "alphabet", label: "алфавиту"}
+    ];
+
+    const items = sortData.map(({type, label}) => {
+        const active = activeSort === type;
+        return <li  key={type} 
+                    className={active ? "active" : null}
+                    onClick={() => onToggleActiveSort(type)}>
+                        {label}
+                </li>
+    });
+
+    return (
+        <div className="sort__popup">
+            <ul>
+                {items}
+            </ul>
         </div>
     )
 }

@@ -23,7 +23,27 @@ const PizzaList = () => {
     const filteredPizza = useSelector(filteredPizzaSelector);
     const {request} = useHttp();
     const dispatch = useDispatch();
-    const { pizzaLoadingStatus} = useSelector(state => state);
+    const { pizzaLoadingStatus} = useSelector(state => state.pizzas);
+    const { activeSort } = useSelector(state => state.filters);
+
+    const sortPizza = (sortArr, active) => {
+        function byField(field) {
+            return (a, b) => a[field] > b[field] ? 1 : -1;
+        }
+        
+        switch (active) {
+            case "popularity":
+                return sortArr.sort(byField("rating")).reverse();
+            case "price":
+                return sortArr.sort(byField("price"));
+            case "alphabet":
+                return sortArr.sort(byField("name"));
+            default:
+                return sortArr
+        }
+    }
+
+    const visiblePizza = sortPizza(filteredPizza, activeSort);
 
     useEffect(() => {
         dispatch(pizzaFetching());
@@ -48,7 +68,7 @@ const PizzaList = () => {
         })
     }
 
-    const elements = renderPizza(filteredPizza);
+    const elements = renderPizza(visiblePizza);
 
     return (
         <div className="content__items">
