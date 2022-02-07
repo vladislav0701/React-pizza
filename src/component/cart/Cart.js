@@ -1,6 +1,57 @@
+import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+
+import { deletePizzaCart, clearCart, plusCartItem, minusCartItem } from "./cartSlice";
+import CartEmpty from "../cartEmpty/CartEmpty";
 import CartItem from "../cartItem/CartItem";
 
 const Cart = () => {
+    const {cart, totalPrice, totalCount} = useSelector(state => state.cart);
+    const dispatch = useDispatch();
+
+    const deletePizza = (id) => {
+        if (window.confirm('Вы действительно хотите удалить?')) {
+            dispatch(deletePizzaCart(id));
+        }
+    }
+
+    const onPlusCartItem = (id) => {
+        dispatch(plusCartItem(id));
+    }
+
+    const onMinusCartItem = (id) => {
+        dispatch(minusCartItem(id));
+    }
+
+    const onClearCart = () => {
+        if (window.confirm('Вы действительно хотите очистить корзину?')) {
+            dispatch(clearCart());
+        }
+    }
+
+    const renderItem = (arr) => {
+        const newArr = Object.keys(arr).map(key => {
+            return arr[key][0]
+        })
+
+        return newArr.map((item, i) => {
+            return <CartItem 
+                    key={`${item.id}_${i}`} 
+                    {...item} 
+                    totalPrice={cart[item.id].reduce((sum, obj) => obj.price + sum, 0)}
+                    totalCount={cart[item.id].length}
+                    onPlusCartItem={() => onPlusCartItem(item.id)}
+                    onMinusCartItem={() => onMinusCartItem(item.id)}
+                    deletePizzaCart={() => deletePizza(item.id)}/>
+        })
+    }
+
+    const items = renderItem(cart);
+
+    if (cart.length === 0) {
+        return <CartEmpty />
+    }
+
     return  (
         <div className="wrapper">
             <div className="content">
@@ -33,27 +84,25 @@ const Cart = () => {
                                     <path d="M11.6666 9.16667V14.1667" stroke="#B6B6B6" strokeWidth="1.2" strokeLinecap="round"
                                     strokeLinejoin="round" />
                                 </svg>
-                                <span>Очистить корзину</span>
+                                <span onClick={onClearCart}>Очистить корзину</span>
                             </div>
                         </div>
-                        <CartItem/>
-                        <CartItem/>
-                        <CartItem/>
+                        {items}
                     </div>
                     <div className="cart__bottom">
                         <div className="cart__bottom-details">
-                            <span> Всего пицц: <b>3 шт.</b> </span>
-                            <span> Сумма заказа: <b>900 ₽</b> </span>
+                            <span> Всего пицц: <b>{totalCount} шт.</b> </span>
+                            <span> Сумма заказа: <b>{totalPrice} ₽</b> </span>
                         </div>
                         <div className="cart__bottom-buttons">
-                            <a href="/" className="button button--outline button--add go-back-btn">
+                            <Link to="/" className="button button--outline button--add go-back-btn">
                                 <svg width="8" height="14" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7 13L1 6.93015L6.86175 1" stroke="#D3D3D3" strokeWidth="1.5" strokeLinecap="round"
                                     strokeLinejoin="round" />
                                 </svg>
 
                                 <span>Вернуться назад</span>
-                            </a>
+                            </Link>
                             <div className="button pay-btn">
                                 <span>Оплатить сейчас</span>
                             </div>

@@ -1,18 +1,18 @@
 import { useSelector, useDispatch } from "react-redux";
 
-import { toggleActiveFilter } from "../../action";
+import { actionFilters } from "./filtersSlice";
 
 const Categories = () => {
     const { activeFilter} = useSelector(state => state.filters);
     const dispatch = useDispatch();
 
     const buttonsData = [
-        {category: 0, label: "Все"},
-        {category: 1, label: "Мясные"},
-        {category: 2, label: "Вегетарианская"},
-        {category: 3, label: "Гриль"},
-        {category: 4, label: "Острые"},
-        {category: 5, label: "Закрытые"}
+        {category: 'all', label: "Все"},
+        {category: 'meat', label: "Мясные"},
+        {category: 'vegetarian', label: "Вегетарианская"},
+        {category: 'grill', label: "Гриль"},
+        {category: 'spicy', label: "Острые"},
+        {category: 'closed', label: "Закрытые"}
     ];
 
     const buttons = buttonsData.map(({category, label}) => {
@@ -21,7 +21,7 @@ const Categories = () => {
         return <li
                 className={active ? "active" : null}
                 key={category}
-                onClick={() => dispatch(toggleActiveFilter(category))}
+                onClick={() => dispatch(actionFilters(category))}
                 >{label}</li>
     })
     

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createSelector } from "reselect";
 
 import { useHttp } from "../../hook/http.hook";
-import { pizzaFetching, pizzaFetched, pizzaFetchingError } from "../../action";
+import { pizzaFetching, pizzaFetched, pizzaFetchingError } from "../../component/pizzaList/pizzaSlice";
 import PizzaListItem from "../pizzaListItem/PizzaListItem";
 import Spinner from "../spinner/Spinner";
 
@@ -12,7 +12,7 @@ const PizzaList = () => {
         (state) => state.filters.activeFilter,
         (state) => state.pizzas.pizza,
         (activeFilter, pizza) => {
-            if (activeFilter === 0) {
+            if (activeFilter === "all") {
                 return pizza;
             } else {
                 return pizza.filter(item => item.category === activeFilter)
@@ -24,22 +24,24 @@ const PizzaList = () => {
     const {request} = useHttp();
     const dispatch = useDispatch();
     const { pizzaLoadingStatus} = useSelector(state => state.pizzas);
+    const { cart } = useSelector(state => state.cart);
     const { activeSort } = useSelector(state => state.filters);
 
     const sortPizza = (sortArr, active) => {
+        let newArr = [...sortArr]
         function byField(field) {
             return (a, b) => a[field] > b[field] ? 1 : -1;
         }
         
         switch (active) {
             case "popularity":
-                return sortArr.sort(byField("rating")).reverse();
+                return newArr.sort(byField("rating")).reverse();
             case "price":
-                return sortArr.sort(byField("price"));
+                return newArr.sort(byField("price"));
             case "alphabet":
-                return sortArr.sort(byField("name"));
+                return newArr.sort(byField("name"));
             default:
-                return sortArr
+                return newArr
         }
     }
 
@@ -63,8 +65,12 @@ const PizzaList = () => {
             return <h3 className="messageLoading">Загрузка...</h3>
         }
 
-        return arr.map(({id, ...props}) => {
-            return <PizzaListItem key={id} {...props} />
+        return arr.map(({...props}) => {
+            return <PizzaListItem 
+                    key={props.id} 
+                    {...props}
+                    addedCount={cart[props.id] ? cart[props.id].length : 0}
+                    />
         })
     }
 

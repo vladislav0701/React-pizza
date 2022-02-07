@@ -1,8 +1,12 @@
-import { createStore, combineReducers } from "redux";
-import pizzas from "../reducers/pizza";
-import filters from "../reducers/filters";
+import { configureStore } from "@reduxjs/toolkit";
+import pizzas from "../component/pizzaList/pizzaSlice";
+import cart from "../component/cart/cartSlice";
+import filters from "../component/filters/filtersSlice";
 
-const store = createStore(combineReducers({pizzas, filters}),
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+const store = configureStore({
+    reducer: {pizzas, cart, filters},
+    middleware: getDefaultMiddleware => getDefaultMiddleware(),
+    devTools: process.env.NODE_ENV !== 'production'
+})
 
 export default store;
