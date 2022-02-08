@@ -46,11 +46,11 @@ const Cart = () => {
         })
     }
 
-    const items = renderItem(cart);
-
-    if (cart.length === 0) {
+    if (cart.length === 0 || !Object.keys(cart).length) {
         return <CartEmpty />
     }
+
+    const items = renderItem(cart);
 
     return  (
         <div className="wrapper">

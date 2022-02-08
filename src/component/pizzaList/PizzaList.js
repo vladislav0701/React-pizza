@@ -1,13 +1,14 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createSelector } from "reselect";
+import { createSelector } from "@reduxjs/toolkit";
 
-import { useHttp } from "../../hook/http.hook";
-import { pizzaFetching, pizzaFetched, pizzaFetchingError } from "../../component/pizzaList/pizzaSlice";
+import { fetchPizza } from "../../component/pizzaList/pizzaSlice";
 import PizzaListItem from "../pizzaListItem/PizzaListItem";
 import Spinner from "../spinner/Spinner";
 
 const PizzaList = () => {
+    const dispatch = useDispatch();
+
     const filteredPizzaSelector = createSelector(
         (state) => state.filters.activeFilter,
         (state) => state.pizzas.pizza,
@@ -19,13 +20,14 @@ const PizzaList = () => {
             }
         }
     );
-
     const filteredPizza = useSelector(filteredPizzaSelector);
-    const {request} = useHttp();
-    const dispatch = useDispatch();
     const { pizzaLoadingStatus} = useSelector(state => state.pizzas);
     const { cart } = useSelector(state => state.cart);
     const { activeSort } = useSelector(state => state.filters);
+
+    useEffect(() => {
+        dispatch(fetchPizza());
+    }, [])
 
     const sortPizza = (sortArr, active) => {
         let newArr = [...sortArr]
@@ -46,13 +48,6 @@ const PizzaList = () => {
     }
 
     const visiblePizza = sortPizza(filteredPizza, activeSort);
-
-    useEffect(() => {
-        dispatch(pizzaFetching());
-        request("http://localhost:3001/pizzas")
-            .then(data => dispatch(pizzaFetched(data)))
-            .catch(() => dispatch(pizzaFetchingError()))
-    }, [])
 
     if (pizzaLoadingStatus === "loading") {
         return <Spinner />
